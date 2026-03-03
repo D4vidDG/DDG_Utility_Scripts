@@ -105,6 +105,18 @@ namespace ExtensionMethods
 
             return angle;
         }
+
+        public static float GetAngle(this Vector3 vector) // Returns an angle between 0 and 360 degrees
+        {
+            float angle = Mathf.Atan2(vector.y, vector.x) * Mathf.Rad2Deg;
+            if (angle < 0)
+            {
+                return 360 + angle;
+            }
+
+            return angle;
+        }
+
     }
 
     public static class LineRendererExtensions
@@ -188,6 +200,62 @@ namespace ExtensionMethods
             }
 
             return interfaces;
+        }
+
+        public static T FindClosest<T>(Vector3 origin, float searchRadius)
+        {
+            float closestDistance = Mathf.Infinity;
+            T closest = default(T);
+            Collider[] collidersInRange = Physics.OverlapSphere(origin, searchRadius);
+            foreach (Collider collider in collidersInRange)
+            {
+                if (!collider.TryGetComponent(out T candidate)) continue;
+                float distance = Vector3.Distance(collider.transform.position, origin);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closest = candidate;
+                }
+            }
+
+            return closest;
+        }
+
+        public static T FindClosest<T>(Vector3 origin, float searchRadius, Func<T, bool> Exclude)
+        {
+            float closestDistance = Mathf.Infinity;
+            T closest = default(T);
+            Collider[] collidersInRange = Physics.OverlapSphere(origin, searchRadius);
+            foreach (Collider collider in collidersInRange)
+            {
+                if (!collider.TryGetComponent(out T candidate)) continue;
+                if (Exclude != null && Exclude(candidate)) continue;
+                float distance = Vector3.Distance(collider.transform.position, origin);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closest = candidate;
+                }
+            }
+
+            return closest;
+        }
+
+        public static Component FindClosest(Vector3 origin, Component[] candidates)
+        {
+            float closestDistance = Mathf.Infinity;
+            Component closest = default;
+            foreach (Component candidate in candidates)
+            {
+                float distance = Vector3.Distance(candidate.transform.position, origin);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closest = candidate;
+                }
+            }
+
+            return closest;
         }
     }
 
