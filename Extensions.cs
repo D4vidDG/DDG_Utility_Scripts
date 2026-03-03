@@ -6,6 +6,40 @@ using UnityEngine.SceneManagement;
 
 namespace ExtensionMethods
 {
+    public static class DebugExtensions
+    {
+        public static void DrawCrossOnPoint(Vector3 point, float size, Color color, float duration)
+        {
+            Debug.DrawRay(point, Vector2.up * size, color, duration);
+            Debug.DrawRay(point, Vector2.down * size, color, duration);
+            Debug.DrawRay(point, Vector2.right * size, color, duration);
+            Debug.DrawRay(point, Vector2.left * size, color, duration);
+        }
+    }
+
+    public static class Copier
+    {
+        public static void CopyComponentSerializedValues<T>(T sourceComp, T targetComp)
+        {
+            string json = JsonUtility.ToJson(sourceComp);
+            JsonUtility.FromJsonOverwrite(json, targetComp);
+        }
+
+        public static void CopyComponentValues<T>(T sourceComp, T targetComp)
+        {
+            FieldInfo[] sourceFields = sourceComp.GetType().GetFields(BindingFlags.Public |
+                                                             BindingFlags.NonPublic |
+                                                             BindingFlags.Instance);
+            int i = 0;
+            for (i = 0; i < sourceFields.Length; i++)
+            {
+                var value = sourceFields[i].GetValue(sourceComp);
+                sourceFields[i].SetValue(targetComp, value);
+            }
+        }
+
+    }
+
     public static class ArrayExtensions
     {
         public static T GetRandom<T>(T[] array)
@@ -257,39 +291,5 @@ namespace ExtensionMethods
 
             return closest;
         }
-    }
-
-    public static class DebugExtensions
-    {
-        public static void DrawCrossOnPoint(Vector3 point, float size, Color color, float duration)
-        {
-            Debug.DrawRay(point, Vector2.up * size, color, duration);
-            Debug.DrawRay(point, Vector2.down * size, color, duration);
-            Debug.DrawRay(point, Vector2.right * size, color, duration);
-            Debug.DrawRay(point, Vector2.left * size, color, duration);
-        }
-    }
-
-    public static class Copier
-    {
-        public static void CopyComponentSerializedValues<T>(T sourceComp, T targetComp)
-        {
-            string json = JsonUtility.ToJson(sourceComp);
-            JsonUtility.FromJsonOverwrite(json, targetComp);
-        }
-
-        public static void CopyComponentValues<T>(T sourceComp, T targetComp)
-        {
-            FieldInfo[] sourceFields = sourceComp.GetType().GetFields(BindingFlags.Public |
-                                                             BindingFlags.NonPublic |
-                                                             BindingFlags.Instance);
-            int i = 0;
-            for (i = 0; i < sourceFields.Length; i++)
-            {
-                var value = sourceFields[i].GetValue(sourceComp);
-                sourceFields[i].SetValue(targetComp, value);
-            }
-        }
-
     }
 }
