@@ -41,7 +41,7 @@ namespace ExtensionMethods
 
     }
 
-    public static class ArrayExtensions
+    public static class RandomExtensions
     {
         public static T GetRandom<T>(T[] array)
         {
@@ -51,6 +51,11 @@ namespace ExtensionMethods
         public static T GetRandom<T>(this List<T> list)
         {
             return list[Random.Range(0, list.Count)];
+        }
+
+        public static float GetRandomValue(this Vector2 vector) // Returns a value between x and y
+        {
+            return Random.Range(vector.x, vector.y);
         }
     }
 
