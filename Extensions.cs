@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 namespace ExtensionMethods
 {
@@ -46,6 +47,11 @@ namespace ExtensionMethods
         {
             return array[Random.Range(0, array.Length)];
         }
+
+        public static T GetRandom<T>(this List<T> list)
+        {
+            return list[Random.Range(0, list.Count)];
+        }
     }
 
     public static class LayerMaskExtensions
@@ -63,6 +69,20 @@ namespace ExtensionMethods
         public static int ToInt(this LayerMask mask, GameObject obj)
         {
             return (int)Mathf.Round(Mathf.Log(mask.value, 2));
+        }
+
+        public static int ToObjectLayer(this LayerMask mask)
+        {
+            int value = mask.value;
+            if (value == 0) return 0;
+            for (int l = 1; l < 32; l++)
+                if ((value & (1 << l)) != 0) return l;
+            return -1;
+        }
+
+        public static int IntToLayerMask(int layer)
+        {
+            return 1 << layer;
         }
     }
 
